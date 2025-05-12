@@ -1,0 +1,141 @@
+/* Custom color variables */
+:root {
+  --teal: #008080;
+  --teal-light: #009999;
+  --teal-lighter: #00b3b3;
+  --teal-dark: #006666;
+  --teal-darker: #004d4d;
+}
+
+/* Override Bootstrap colors */
+.bg-teal {
+  background-color: var(--teal) !important;
+}
+
+.bg-teal-light {
+  background-color: var(--teal-light) !important;
+  transition: all 0.3s ease;
+}
+
+.bg-teal-light:hover {
+  background-color: var(--teal-lighter) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation styles */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0.8rem 0;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: white !important;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.2s ease;
+  border-radius: 0.25rem;
+  margin: 0 0.2rem;
+}
+
+.nav-link:hover {
+  color: white !important;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-nav .nav-link.active {
+  color: white !important;
+  font-weight: 600;
+}
+
+/* Form styles */
+.form-control, .form-select {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--teal-darker);
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: white;
+  border-color: var(--teal-light);
+  box-shadow: 0 0 0 0.25rem rgba(0, 128, 128, 0.25);
+}
+
+.btn-light {
+  background-color: white;
+  color: var(--teal);
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-light:hover {
+  background-color: #f0f0f0;
+  color: var(--teal-dark);
+  transform: translateY(-1px);
+}
+
+/* Card styles */
+.card {
+  border: none;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Custom styles */
+.min-vh-100 {
+  min-height: 100vh;
+}
+
+.rounded-3 {
+  border-radius: 0.5rem !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2.2rem;
+  }
+  
+  .lead {
+    font-size: 1.1rem;
+  }
+  
+  .navbar-nav {
+    margin-top: 1rem;
+  }
+  
+  .nav-link {
+    padding: 0.5rem 0.5rem !important;
+    margin: 0.2rem 0;
+  }
+}
+
+/* Animation for page transitions */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
