@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  address: { type: String },
   email: {
     type: String,
     required: true,
@@ -17,10 +19,17 @@ const UserSchema = new mongoose.Schema({
     enum: ['user', 'merchant', 'admin'],
     default: 'user'
   },
+  savedDeals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Deal' }],
+  claimedDeals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Deal' }],
+  isBanned: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
+
 
 export default mongoose.model('User', UserSchema);

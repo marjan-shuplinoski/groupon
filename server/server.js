@@ -4,6 +4,12 @@ import express from 'express';
 import cors from 'cors';
 import connectDB from './config/db.js';
 
+import authRouter from './routes/auth.js';
+import dealsRouter from './routes/deals.js';
+import adminRouter from './routes/admin.js';
+import userRouter from './routes/user.js';
+import merchantRouter from './routes/merchant.js';
+
 const app = express();
 
 // Middleware
@@ -16,14 +22,11 @@ app.get('/api/ping', (req, res) => {
 });
 
 // Import routers (ESM)
-import authRouter from './routes/auth.js';
-import dealsRouter from './routes/deals.js';
-import merchantRouter from './routes/merchant.js';
-import adminRouter from './routes/admin.js';
 
 // Register routes
 app.use('/api/auth', authRouter);
 app.use('/api/deals', dealsRouter);
+app.use('/api/user', userRouter);
 app.use('/api/merchant', merchantRouter);
 app.use('/api/admin', adminRouter);
 

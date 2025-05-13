@@ -1,4 +1,4 @@
-import Merchant from '../models/Merchant.js';
+import User from '../models/User.js';
 import Deal from '../models/Deal.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -8,8 +8,8 @@ import jwt from 'jsonwebtoken';
 // @access  Public
 export const register = async (req, res) => {
   try {
-    const { email, password, repeatPassword, businessName, logo, contactInfo } = req.body;
-    if (!email || !password || !repeatPassword || !businessName) {
+    const { name, address, email, password, repeatPassword, businessName, logo, contactInfo } = req.body;
+    if (!name || !email || !password || !repeatPassword || !businessName) {
       return res.status(400).json({ message: 'All fields are required' });
     }
     if (password !== repeatPassword) {
@@ -18,15 +18,18 @@ export const register = async (req, res) => {
     if (password.length < 6) {
       return res.status(400).json({ message: 'Password must be at least 6 characters' });
     }
-    const existing = await Merchant.findOne({ email });
+    const existing = await User.findOne({ email, role: 'merchant' });
     if (existing) {
       return res.status(409).json({ message: 'email exists' });
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const merchant = new Merchant({
+    const merchant = new User({
+      name,
+      address,
       email,
       password: hashedPassword,
+      role: 'merchant',
       businessName,
       logo,
       contactInfo
@@ -39,20 +42,82 @@ export const register = async (req, res) => {
   }
 };
 
-// @desc    Merchant dashboard (basic info)
+// @desc    Merchant dashboard (stats + deal info)
 // @route   GET /api/merchant/dashboard
 // @access  Private (merchant)
 export const dashboard = async (req, res) => {
-  // Placeholder: In real app, use req.user.id from JWT and aggregate stats
-  res.json({ message: 'merchant dashboard', stats: { totalDeals: 0, totalRedemptions: 0 } });
+  try {
+    const merchant = await User.findById(req.user.id);
+    if (!merchant || merchant.role !== 'merchant') {
+      return res.status(404).json({ message: 'Merchant not found' });
+    }
+    // Get all deals for this merchant
+    const deals = await Deal.find({ merchant: merchant._id });
+    let totalClaimed = 0;
+    const dealStats = await Promise.all(
+      deals.map(async (deal) => {
+        const claimedCount = await User.countDocuments({ claimedDeals: deal._id });
+        const favoritedCount = await User.countDocuments({ savedDeals: deal._id });
+        totalClaimed += claimedCount;
+        return {
+          id: deal._id,
+          title: deal.title,
+          status: deal.status,
+          claimedCount,
+          favoritedCount
+        };
+      })
+    );
+    res.json({
+      totalDeals: deals.length,
+      totalClaimed,
+      deals: dealStats
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 // @desc    Merchant profile
 // @route   GET /api/merchant/profile
 // @access  Private (merchant)
 export const profile = async (req, res) => {
-  // Placeholder: In real app, use req.user.id from JWT
-  res.json({ message: 'merchant profile' });
+  try {
+    const merchant = await User.findById(req.user.id);
+    if (!merchant || merchant.role !== 'merchant') {
+      return res.status(404).json({ message: 'Merchant not found' });
+    }
+    // Get all deals for this merchant
+    const deals = await Deal.find({ merchant: merchant._id });
+    // For each deal, count how many users have claimed/favorited it
+    const dealStats = await Promise.all(
+      deals.map(async (deal) => {
+        const claimedCount = await User.countDocuments({ claimedDeals: deal._id });
+        const favoritedCount = await User.countDocuments({ savedDeals: deal._id });
+        return {
+          id: deal._id,
+          title: deal.title,
+          status: deal.status,
+          claimedCount,
+          favoritedCount
+        };
+      })
+    );
+    res.json({
+      name: merchant.name,
+      address: merchant.address,
+      email: merchant.email,
+      businessName: merchant.businessName,
+      logo: merchant.logo,
+      contactInfo: merchant.contactInfo,
+      createdAt: merchant.createdAt,
+      deals: dealStats
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 // @desc    Merchant login
@@ -64,7 +129,7 @@ export const login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'All fields are required' });
     }
-    const merchant = await Merchant.findOne({ email });
+    const merchant = await User.findOne({ email, role: 'merchant' });
     if (!merchant) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }

@@ -8,9 +8,9 @@ import jwt from 'jsonwebtoken';
 export const signup = async (req, res) => {
 
   try {
-    const { email, password, repeatPassword, role } = req.body;
+    const { name, address, email, password, repeatPassword, role } = req.body;
     // Basic validation
-    if (!email || !password || !repeatPassword) {
+    if (!name || !email || !password || !repeatPassword) {
       return res.status(400).json({ message: 'All fields are required' });
     }
     if (password !== repeatPassword) {
@@ -29,6 +29,8 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     // Create user
     const user = new User({
+      name,
+      address,
       email,
       password: hashedPassword,
       role: role || 'user'

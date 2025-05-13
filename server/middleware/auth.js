@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import Merchant from '../models/Merchant.js';
+import User from '../models/User.js';
 
 // Middleware to verify JWT and attach user/merchant to req
 export const authenticate = (req, res, next) => {
@@ -29,8 +29,8 @@ export const merchantOnly = async (req, res, next) => {
   }
   // Optionally, fetch the merchant from DB and attach
   try {
-    const merchant = await Merchant.findById(req.user.id);
-    if (!merchant) return res.status(404).json({ message: 'Merchant not found' });
+    const merchant = await User.findById(req.user.id);
+    if (!merchant || merchant.role !== 'merchant') return res.status(404).json({ message: 'Merchant not found' });
     req.merchant = merchant;
     next();
   } catch (err) {

@@ -8,7 +8,7 @@ const DealSchema = new mongoose.Schema({
   terms: String,
   expiry: Date,
   status: { type: String, enum: ['published', 'draft', 'expired'], default: 'draft' },
-  merchant: { type: mongoose.Schema.Types.ObjectId, ref: 'Merchant', required: true },
+  merchant: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   createdAt: { type: Date, default: Date.now }
 });
 

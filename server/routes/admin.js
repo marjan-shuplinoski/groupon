@@ -1,29 +1,48 @@
 import express from 'express';
+import { adminLogin, getUsers, banUser, getMerchants, banMerchant, getDeals, moderateDeal, getStats } from '../controllers/adminController.js';
+import { authenticate } from '../middleware/auth.js';
+import { adminOnly } from '../middleware/admin.js';
 const router = express.Router();
 
-// @route   GET /api/admin/dashboard
-// @desc    Admin dashboard info
-router.get('/dashboard', (req, res) => {
-  res.json({ message: 'admin dashboard' });
-});
+// @route   POST /api/admin/login
+// @desc    Admin login
+// @access  Public
+router.post('/login', adminLogin);
 
 // @route   GET /api/admin/users
 // @desc    List all users
-router.get('/users', (req, res) => {
-  res.json({ message: 'admin users' });
-});
+// @access  Private (admin)
+router.get('/users', authenticate, adminOnly, getUsers);
+
+// @route   PATCH /api/admin/users/:id/ban
+// @desc    Ban/unban user
+// @access  Private (admin)
+router.patch('/users/:id/ban', authenticate, adminOnly, banUser);
 
 // @route   GET /api/admin/merchants
 // @desc    List all merchants
-router.get('/merchants', (req, res) => {
-  res.json({ message: 'admin merchants' });
-});
+// @access  Private (admin)
+router.get('/merchants', authenticate, adminOnly, getMerchants);
+
+// @route   PATCH /api/admin/merchants/:id/ban
+// @desc    Ban/unban merchant
+// @access  Private (admin)
+router.patch('/merchants/:id/ban', authenticate, adminOnly, banMerchant);
 
 // @route   GET /api/admin/deals
 // @desc    List all deals
-router.get('/deals', (req, res) => {
-  res.json({ message: 'admin deals' });
-});
+// @access  Private (admin)
+router.get('/deals', authenticate, adminOnly, getDeals);
+
+// @route   PATCH /api/admin/deals/:id/moderate
+// @desc    Moderate (unpublish) a deal
+// @access  Private (admin)
+router.patch('/deals/:id/moderate', authenticate, adminOnly, moderateDeal);
+
+// @route   GET /api/admin/stats
+// @desc    System stats
+// @access  Private (admin)
+router.get('/stats', authenticate, adminOnly, getStats);
 
 // @route   POST /api/admin/ban-user
 // @desc    Ban user
