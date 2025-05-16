@@ -25,6 +25,10 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  // Merchant specific fields
+  businessName: { type: String },
+  logo: { type: String },
+  contactInfo: { type: String },
   createdAt: {
     type: Date,
     default: Date.now

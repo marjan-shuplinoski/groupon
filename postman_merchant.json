@@ -4,14 +4,14 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
-    { "name": "Register", "request": { "method": "POST", "url": "{{baseUrl}}/api/merchant/register", "body": { "mode": "raw", "raw": "{\"name\":\"Biz Owner\",\"email\":\"merchant@example.com\",\"password\":\"123456\",\"repeatPassword\":\"123456\",\"businessName\":\"BizName\"}" } } },
-    { "name": "Login", "request": { "method": "POST", "url": "{{baseUrl}}/api/merchant/login", "body": { "mode": "raw", "raw": "{\"email\":\"merchant@example.com\",\"password\":\"123456\"}" } } },
-    { "name": "Get Dashboard", "request": { "method": "GET", "url": "{{baseUrl}}/api/merchant/dashboard" } },
-    { "name": "Get Profile", "request": { "method": "GET", "url": "{{baseUrl}}/api/merchant/profile" } },
-    { "name": "Create Deal", "request": { "method": "POST", "url": "{{baseUrl}}/api/merchant/deals", "body": { "mode": "raw", "raw": "{\"title\":\"Deal Title\",\"description\":\"Great deal\",\"price\":10,\"discount\":2,\"terms\":\"T&C\",\"expiry\":\"2025-12-31\",\"status\":\"draft\"}" } } },
-    { "name": "Get My Deals", "request": { "method": "GET", "url": "{{baseUrl}}/api/merchant/deals" } },
-    { "name": "Get Deal by ID", "request": { "method": "GET", "url": "{{baseUrl}}/api/merchant/deals/DEAL_ID" } },
-    { "name": "Update Deal", "request": { "method": "PUT", "url": "{{baseUrl}}/api/merchant/deals/DEAL_ID", "body": { "mode": "raw", "raw": "{\"title\":\"Updated Title\"}" } } },
-    { "name": "Delete Deal", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/merchant/deals/DEAL_ID" } }
+    { "name": "Register", "request": { "method": "POST", "url": "{{baseUrl}}/api/merchant/register", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"name\":\"Biz Owner\",\"email\":\"merchant@example.com\",\"password\":\"123456\",\"repeatPassword\":\"123456\",\"businessName\":\"BizName\",\"address\":\"123 Business St\",\"contactInfo\":\"555-1234\"}", "options": { "raw": { "language": "json" } } } } },
+    { "name": "Login", "request": { "method": "POST", "url": "{{baseUrl}}/api/merchant/login", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"merchant@example.com\",\"password\":\"123456\"}", "options": { "raw": { "language": "json" } } } } },
+    { "name": "Get Dashboard", "request": { "method": "GET", "url": "{{baseUrl}}/api/merchant/dashboard", "header": [{ "key": "Authorization", "value": "Bearer {{merchantToken}}" }] } },
+    { "name": "Get Profile", "request": { "method": "GET", "url": "{{baseUrl}}/api/merchant/profile", "header": [{ "key": "Authorization", "value": "Bearer {{merchantToken}}" }] } },
+    { "name": "Create Deal", "request": { "method": "POST", "url": "{{baseUrl}}/api/merchant/deals", "header": [{ "key": "Authorization", "value": "Bearer {{merchantToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"title\":\"Deal Title\",\"description\":\"Great deal\",\"price\":10,\"discount\":2,\"terms\":\"T&C\",\"expiry\":\"2025-12-31\",\"status\":\"draft\"}", "options": { "raw": { "language": "json" } } } } },
+    { "name": "Get My Deals", "request": { "method": "GET", "url": "{{baseUrl}}/api/merchant/deals", "header": [{ "key": "Authorization", "value": "Bearer {{merchantToken}}" }] } },
+    { "name": "Get Deal by ID", "request": { "method": "GET", "url": "{{baseUrl}}/api/merchant/deals/DEAL_ID", "header": [{ "key": "Authorization", "value": "Bearer {{merchantToken}}" }] } },
+    { "name": "Update Deal", "request": { "method": "PUT", "url": "{{baseUrl}}/api/merchant/deals/DEAL_ID", "header": [{ "key": "Authorization", "value": "Bearer {{merchantToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"title\":\"Updated Title\"}", "options": { "raw": { "language": "json" } } } } },
+    { "name": "Delete Deal", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/merchant/deals/DEAL_ID", "header": [{ "key": "Authorization", "value": "Bearer {{merchantToken}}" }] } }
   ]
 }

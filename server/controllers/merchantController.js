@@ -153,13 +153,47 @@ export const login = async (req, res) => {
 export const createDeal = async (req, res) => {
   try {
     const { title, description, price, discount, terms, expiry, status } = req.body;
+    
     // Validate required fields
-    if (!title || !description || !price || !discount || !terms || !expiry || !status) {
-      return res.status(400).json({ message: 'All deal fields are required.' });
+    if (!title) {
+      return res.status(400).json({ message: 'Title is required.' });
     }
-    if (typeof price !== 'number' || price <= 0 || typeof discount !== 'number' || discount <= 0) {
-      return res.status(400).json({ message: 'Price and discount must be positive numbers.' });
+    
+    if (!description) {
+      return res.status(400).json({ message: 'Description is required.' });
     }
+    
+    if (!price) {
+      return res.status(400).json({ message: 'Price is required.' });
+    }
+    
+    if (!discount) {
+      return res.status(400).json({ message: 'Discount is required.' });
+    }
+    
+    if (!terms) {
+      return res.status(400).json({ message: 'Terms are required.' });
+    }
+    
+    if (!expiry) {
+      return res.status(400).json({ message: 'Expiry date is required.' });
+    }
+    
+    // Validate data types and values
+    if (typeof price !== 'number' || price <= 0) {
+      return res.status(400).json({ message: 'Price must be a positive number.' });
+    }
+    
+    if (typeof discount !== 'number' || discount <= 0) {
+      return res.status(400).json({ message: 'Discount must be a positive number.' });
+    }
+    
+    // Validate status
+    if (status && !['published', 'draft', 'expired'].includes(status)) {
+      return res.status(400).json({ message: 'Status must be published, draft, or expired.' });
+    }
+    
+    // Create deal with only the fields defined in the model
     const deal = new Deal({
       title,
       description,
@@ -167,13 +201,17 @@ export const createDeal = async (req, res) => {
       discount,
       terms,
       expiry,
-      status,
+      status: status || 'draft', // Default to draft if not provided
       merchant: req.user.id
     });
+    
     await deal.save();
     return res.status(201).json({ message: 'Deal created successfully.', deal });
   } catch (err) {
     console.error(err);
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ message: err.message });
+    }
     return res.status(500).json({ message: 'Server error' });
   }
 };
@@ -201,12 +239,45 @@ export const getDeal = async (req, res) => {
 
 export const updateDeal = async (req, res) => {
   try {
+    // Get the existing deal first
+    const existingDeal = await Deal.findOne({ _id: req.params.id, merchant: req.user.id });
+    if (!existingDeal) return res.status(404).json({ message: 'Deal not found' });
+    
+    // Extract only the fields that are in the Deal model
+    const { title, description, price, discount, terms, expiry, status } = req.body;
+    
+    // Create an update object with only valid fields
+    const updateData = {};
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (price !== undefined) {
+      if (typeof price !== 'number' || price <= 0) {
+        return res.status(400).json({ message: 'Price must be a positive number' });
+      }
+      updateData.price = price;
+    }
+    if (discount !== undefined) {
+      if (typeof discount !== 'number' || discount <= 0) {
+        return res.status(400).json({ message: 'Discount must be a positive number' });
+      }
+      updateData.discount = discount;
+    }
+    if (terms !== undefined) updateData.terms = terms;
+    if (expiry !== undefined) updateData.expiry = expiry;
+    if (status !== undefined) {
+      if (!['published', 'draft', 'expired'].includes(status)) {
+        return res.status(400).json({ message: 'Status must be published, draft, or expired' });
+      }
+      updateData.status = status;
+    }
+    
+    // Update the deal with validated data
     const deal = await Deal.findOneAndUpdate(
       { _id: req.params.id, merchant: req.user.id },
-      req.body,
+      updateData,
       { new: true }
     );
-    if (!deal) return res.status(404).json({ message: 'Deal not found' });
+    
     return res.json({ message: 'deal updated', deal });
   } catch (err) {
     console.error(err);

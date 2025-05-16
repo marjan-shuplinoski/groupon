@@ -96,18 +96,27 @@ export const getDeals = async (req, res) => {
 
 // Moderate (unpublish) a deal
 export const moderateDeal = async (req, res) => {
-  const deal = await Deal.findById(req.params.id);
-  if (!deal) return res.status(404).json({ message: 'Deal not found' });
+  try {
+    const deal = await Deal.findById(req.params.id);
+    if (!deal) return res.status(404).json({ message: 'Deal not found' });
 
-  // Accept status from body, default to 'draft' if not provided or invalid
-  const { status } = req.body;
-  if (status === 'published' || status === 'draft') {
+    // Accept status from body, validate it's a valid status
+    const { status } = req.body;
+    if (!status) {
+      return res.status(400).json({ message: 'Status is required' });
+    }
+    
+    if (!['published', 'draft', 'expired'].includes(status)) {
+      return res.status(400).json({ message: 'Status must be published, draft, or expired' });
+    }
+    
     deal.status = status;
-  } else {
-    deal.status = 'draft';
+    await deal.save();
+    res.json({ message: `Deal status updated to ${deal.status}`, deal });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
-  await deal.save();
-  res.json({ message: `Deal status updated to ${deal.status}` });
 };
 
 // System stats
