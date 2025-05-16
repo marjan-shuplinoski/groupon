@@ -1,0 +1,19 @@
+{
+  "info": {
+    "name": "Groupon User APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "Signup", "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/signup", "body": { "mode": "raw", "raw": "{\"name\":\"John\",\"email\":\"john@example.com\",\"password\":\"123456\",\"repeatPassword\":\"123456\"}" } } },
+    { "name": "Login", "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/login", "body": { "mode": "raw", "raw": "{\"email\":\"john@example.com\",\"password\":\"123456\"}" } } },
+    { "name": "Logout", "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/logout" } },
+    { "name": "Get Dashboard", "request": { "method": "GET", "url": "{{baseUrl}}/api/user/dashboard" } },
+    { "name": "Get Profile", "request": { "method": "GET", "url": "{{baseUrl}}/api/user/profile" } },
+    { "name": "Get Deals", "request": { "method": "GET", "url": "{{baseUrl}}/api/deals" } },
+    { "name": "Get Deal Details", "request": { "method": "GET", "url": "{{baseUrl}}/api/deals/DEAL_ID" } },
+    { "name": "Claim Deal", "request": { "method": "POST", "url": "{{baseUrl}}/api/deals/DEAL_ID/claim" } },
+    { "name": "Unclaim Deal", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/deals/DEAL_ID/claim" } },
+    { "name": "Favorite Deal", "request": { "method": "POST", "url": "{{baseUrl}}/api/deals/DEAL_ID/favorite" } },
+    { "name": "Unfavorite Deal", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/deals/DEAL_ID/favorite" } }
+  ]
+}

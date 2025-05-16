@@ -7,6 +7,12 @@ import Deal from '../models/Deal.js';
 export const dashboard = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('claimedDeals savedDeals');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+    if (user.isBanned) {
+      return res.status(403).json({ message: 'This account is banned. Please contact support.' });
+    }
     res.json({
       email: user.email,
       claimedDeals: user.claimedDeals,

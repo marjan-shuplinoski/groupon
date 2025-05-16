@@ -1,8 +1,9 @@
 import express from 'express';
-import { adminLogin, getUsers, banUser, getMerchants, banMerchant, getDeals, moderateDeal, getStats } from '../controllers/adminController.js';
+import { adminLogin, getUsers, banUser, getMerchants, banMerchant, getDeals, moderateDeal, getStats, banUserById, banMerchantById } from '../controllers/adminController.js';
 import { authenticate } from '../middleware/auth.js';
 import { adminOnly } from '../middleware/admin.js';
 const router = express.Router();
+
 
 // @route   POST /api/admin/login
 // @desc    Admin login
@@ -45,27 +46,12 @@ router.patch('/deals/:id/moderate', authenticate, adminOnly, moderateDeal);
 router.get('/stats', authenticate, adminOnly, getStats);
 
 // @route   POST /api/admin/ban-user
-// @desc    Ban user
-router.post('/ban-user', (req, res) => {
-  res.json({ message: 'user banned' });
-});
+// @desc    Ban user by ID (body: { userId })
+router.post('/ban-user', authenticate, adminOnly, banUserById);
 
 // @route   POST /api/admin/ban-merchant
-// @desc    Ban merchant
-router.post('/ban-merchant', (req, res) => {
-  res.json({ message: 'merchant banned' });
-});
+// @desc    Ban/unban merchant by ID (body: { merchantId })
+router.post('/ban-merchant', authenticate, adminOnly, banMerchantById);
 
-// @route   POST /api/admin/unban-user
-// @desc    Unban user
-router.post('/unban-user', (req, res) => {
-  res.json({ message: 'user unbanned' });
-});
-
-// @route   POST /api/admin/unban-merchant
-// @desc    Unban merchant
-router.post('/unban-merchant', (req, res) => {
-  res.json({ message: 'merchant unbanned' });
-});
 
 export default router;

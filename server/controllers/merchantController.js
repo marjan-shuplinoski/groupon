@@ -133,6 +133,9 @@ export const login = async (req, res) => {
     if (!merchant) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+    if (merchant.isBanned) {
+      return res.status(403).json({ message: 'This merchant account is banned. Please contact support.' });
+    }
     const isMatch = await bcrypt.compare(password, merchant.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
@@ -150,6 +153,13 @@ export const login = async (req, res) => {
 export const createDeal = async (req, res) => {
   try {
     const { title, description, price, discount, terms, expiry, status } = req.body;
+    // Validate required fields
+    if (!title || !description || !price || !discount || !terms || !expiry || !status) {
+      return res.status(400).json({ message: 'All deal fields are required.' });
+    }
+    if (typeof price !== 'number' || price <= 0 || typeof discount !== 'number' || discount <= 0) {
+      return res.status(400).json({ message: 'Price and discount must be positive numbers.' });
+    }
     const deal = new Deal({
       title,
       description,
@@ -161,7 +171,7 @@ export const createDeal = async (req, res) => {
       merchant: req.user.id
     });
     await deal.save();
-    return res.status(201).json({ message: 'deal created', deal });
+    return res.status(201).json({ message: 'Deal created successfully.', deal });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
