@@ -23,11 +23,31 @@ router.get('/dashboard', authenticate, merchantOnly, dashboard);
 // @access  Private (merchant)
 router.get('/profile', authenticate, merchantOnly, profile);
 
-// Deal CRUD (Private, merchant only)
+// Deal Management Routes (Private, merchant only)
+
+// @route   POST /api/merchant/deals
+// @desc    Create a new deal
+// @access  Private (merchant)
 router.post('/deals', authenticate, merchantOnly, createDeal);
+
+// @route   GET /api/merchant/deals
+// @desc    Get all deals for merchant
+// @access  Private (merchant)
 router.get('/deals', authenticate, merchantOnly, getDeals);
+
+// @route   GET /api/merchant/deals/:id
+// @desc    Get specific deal by ID
+// @access  Private (merchant)
 router.get('/deals/:id', authenticate, merchantOnly, getDeal);
+
+// @route   PUT /api/merchant/deals/:id
+// @desc    Update existing deal
+// @access  Private (merchant)
 router.put('/deals/:id', authenticate, merchantOnly, updateDeal);
+
+// @route   DELETE /api/merchant/deals/:id
+// @desc    Delete a deal
+// @access  Private (merchant)
 router.delete('/deals/:id', authenticate, merchantOnly, deleteDeal);
 
 export default router;

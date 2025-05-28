@@ -90,17 +90,17 @@ export const profile = async (req, res) => {
     }
     // Get all deals for this merchant
     const deals = await Deal.find({ merchant: merchant._id });
-    // For each deal, count how many users have claimed/favorited it
+    // For each deal, count how many users have claimed/saved it
     const dealStats = await Promise.all(
       deals.map(async (deal) => {
         const claimedCount = await User.countDocuments({ claimedDeals: deal._id });
-        const favoritedCount = await User.countDocuments({ savedDeals: deal._id });
+        const savedCount = await User.countDocuments({ savedDeals: deal._id });
         return {
           id: deal._id,
           title: deal.title,
           status: deal.status,
           claimedCount,
-          favoritedCount
+          savedCount
         };
       })
     );
@@ -155,42 +155,25 @@ export const createDeal = async (req, res) => {
     const { title, description, price, discount, terms, expiry, status } = req.body;
     
     // Validate required fields
-    if (!title) {
-      return res.status(400).json({ message: 'Title is required.' });
-    }
-    
-    if (!description) {
-      return res.status(400).json({ message: 'Description is required.' });
-    }
-    
-    if (!price) {
-      return res.status(400).json({ message: 'Price is required.' });
-    }
-    
-    if (!discount) {
-      return res.status(400).json({ message: 'Discount is required.' });
-    }
-    
-    if (!terms) {
-      return res.status(400).json({ message: 'Terms are required.' });
-    }
-    
-    if (!expiry) {
-      return res.status(400).json({ message: 'Expiry date is required.' });
-    }
-    
-    // Validate data types and values
-    if (typeof price !== 'number' || price <= 0) {
-      return res.status(400).json({ message: 'Price must be a positive number.' });
-    }
-    
-    if (typeof discount !== 'number' || discount <= 0) {
-      return res.status(400).json({ message: 'Discount must be a positive number.' });
-    }
-    
-    // Validate status
-    if (status && !['published', 'draft', 'expired'].includes(status)) {
-      return res.status(400).json({ message: 'Status must be published, draft, or expired.' });
+    const validateField = (field, name) => !field ? { error: true, message: `${name} is required.` } : null;
+    const validateNumber = (value, name) => typeof value !== 'number' || value <= 0 ? { error: true, message: `${name} must be a positive number.` } : null;
+    const validateStatus = (status) => status && !['published', 'draft', 'expired'].includes(status) ? { error: true, message: 'Status must be published, draft, or expired.' } : null;
+
+    const validations = [
+      validateField(title, 'Title'),
+      validateField(description, 'Description'),
+      validateField(price, 'Price'),
+      validateField(discount, 'Discount'),
+      validateField(terms, 'Terms'),
+      validateField(expiry, 'Expiry date'),
+      validateNumber(price, 'Price'),
+      validateNumber(discount, 'Discount'),
+      validateStatus(status)
+    ];
+
+    const validationError = validations.find(v => v && v.error);
+    if (validationError) {
+      return res.status(400).json({ message: validationError.message });
     }
     
     // Create deal with only the fields defined in the model
