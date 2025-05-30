@@ -2,101 +2,239 @@
 trigger: always_on
 ---
 
-This project is a Groupon clone built with the MERN stack (MongoDB, Express.js, React.js, Node.js) and styled using Bootstrap. The goal is to replicate Groupon’s core features for users, merchants, and administrators, focusing on role-based functionality, clean UI/UX, and scalable architecture.
+# Groupon Clone - Project Guidelines
 
-👤 User Features
-Registration & Login with secure password hashing
+## 🚀 Project Overview
+A Groupon clone built with the MERN stack (MongoDB, Express.js, React.js, Node.js) and Bootstrap. Focuses on role-based functionality, clean UI/UX, and scalable architecture.
 
-JWT-based authentication
+## 🛠 Tech Stack
+### Core Technologies
+- **Frontend**: React 18, React Router 6, Bootstrap 5, Context API
+- **Backend**: Node.js 18+, Express.js 4.x
+- **Database**: MongoDB 7.0+ with Mongoose 8.x ODM
 
-Browse Deals: Home page with featured/local/filtered deals
+### Key Dependencies
+- **Authentication**: JWT with HttpOnly cookies
+- **Form Handling**: Formik with Yup validation
+- **State Management**: React Context API (Redux optional)
+- **HTTP Client**: Axios for API requests
+- **Linting**: ESLint + Prettier (Airbnb config)
+- **Testing**: Jest + React Testing Library + Supertest
+- **API Documentation**: Swagger/OpenAPI
 
-Search & Category Filtering
+### Version Requirements
+- Node.js: ^18.0.0
+- npm: ^9.0.0 or yarn: ^1.22.0
+- MongoDB: ^7.0.0
 
-Deal Details: Full page view of each deal with merchant info and terms
+## 🏗 Development Setup
 
-Save/Favorite Deals for later
+### Prerequisites
+- Node.js 18+
+- MongoDB 7.0+
+- npm 9+ or yarn 1.22+
 
-Fake Checkout Flow (no payment for now) — button to “Claim” or “Reserve” deals
+### Environment Variables
+Create `.env` files in both `client/` and `server/` directories:
 
-User Dashboard: View claimed deals and profile info
+**Server (.env)**
+```
+NODE_ENV=development
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/groupon-clone
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRE=30d
+```
 
-🏪 Merchant Features
-Merchant Registration: Separate flow from user registration
+**Client (.env)**
+```
+REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_GOOGLE_MAPS_API_KEY=your_google_maps_key
+```
 
-Merchant Dashboard:
+### Installation
+```bash
+# Install dependencies
+cd server && npm install
+cd ../client && npm install
 
-Add/edit/delete deals
+# Run development servers
+# Terminal 1 - Backend
+cd server && npm run dev
 
-View basic analytics (views, redemptions, etc.)
+# Terminal 2 - Frontend
+cd client && npm start
+```
 
-Manage merchant profile (business name, logo, contact info)
+## 📝 Code Style
+- **JavaScript/React**: Follow Airbnb Style Guide
+- **Naming Conventions**:
+  - Components: PascalCase (e.g., `DealCard.jsx`)
+  - Files/Folders: kebab-case
+  - Variables/Functions: camelCase
+  - Constants: UPPER_SNAKE_CASE
+- **Imports Order**:
+  1. External libraries
+  2. Internal components
+  3. Styles/assets
+  4. Types (if using TypeScript)
 
-Status of Deals: Published / Draft / Expired
+## 🔄 Git Workflow
+- **Branch Naming**:
+  - `feature/feature-name` for new features
+  - `bugfix/description` for bug fixes
+  - `hotfix/description` for critical fixes
+  - `chore/description` for maintenance tasks
 
-🛠️ Admin Features
-Admin Dashboard
+- **Commit Message Format**:
+  ```
+  type(scope): subject
+  
+  [optional body]
+  
+  [optional footer]
+  ```
+  
+  **Types**: feat, fix, docs, style, refactor, test, chore
 
-View/manage all users, merchants, and deals
-
-Ban/unban users or merchants
-
-Moderate reported deals
-
-System Overview: Stats for total users, deals, active merchants, etc.
-
-🔐 Auth & Roles
-JWT stored in HttpOnly cookies (or localStorage if easier for now)
-
-Roles: user, merchant, admin
-
-Protected routes on both frontend and backend based on role
-
-🔧 Tech Stack Summary
-Frontend: React + Bootstrap + Context API (or Redux if needed)
-
-Backend: Node.js + Express + Mongoose
-
-Database: MongoDB
-
-Deployment (eventually): Could be uploaded on VPS Ubuntu 24.04
-
-📁 Folder and File Structure
-
+## 🏗 Project Structure
+```
 groupon-clone/
 │
 ├── client/                          # React frontend
-│   ├── public/
-│   ├── src/
-│   │   ├── assets/                  # Static assets (images, logos, etc.)
-│   │   ├── components/              # Reusable components (Navbar, Footer, DealCard, etc.)
-│   │   ├── pages/                   # Page components (Home, Deals, Checkout, etc.)
-│   │   │   ├── user/                # User-specific pages
-│   │   │   ├── merchant/            # Merchant dashboard, deal management
-│   │   │   └── admin/               # Admin panel (user, deal, and merchant management)
-│   │   ├── context/                 # Global context (auth, cart, role)
-│   │   ├── services/                # API integrations (auth, deals, payments)
-│   │   ├── utils/                   # Helper functions (formatting, validation)
-│   │   ├── App.js                   # Main app with route config
-│   │   └── index.js                 # React DOM render
+│   ├── public/                     # Static files
+│   └── src/
+│       ├── assets/               # Images, fonts, etc.
+│       ├── components/           # Reusable UI components
+│       ├── context/              # React context providers
+│       ├── hooks/                # Custom React hooks
+│       ├── pages/                # Page components
+│       ├── services/             # API service layer
+│       ├── utils/                # Helper functions
+│       └── App.js                # Main application component
 │
-├── server/                          # Node/Express backend
-│   ├── config/                      # DB config, Stripe/PayPal setup, dotenv
-│   ├── controllers/                 # Route logic (auth, deals, payments, etc.)
-│   ├── middleware/                  # Auth middleware, error handlers, validators
-│   ├── models/                      # Mongoose schemas (User, Deal, Order, etc.)
-│   ├── routes/                      # Route definitions
-│   │   ├── auth.js
-│   │   ├── deals.js
-│   │   ├── merchant.js
-│   │   ├── admin.js
-│   │   └── payments.js
-│   └── server.js                   # Main server file
+├── server/                      # Node.js backend
+│   ├── config/                  # Configuration files
+│   ├── controllers/             # Route controllers
+│   ├── middleware/              # Express middleware
+│   ├── models/                  # Mongoose models
+│   ├── routes/                  # Route definitions
+│   ├── services/                # Business logic
+│   └── utils/                   # Utility functions
 │
-├── .env                             # Environment variables
-├── .gitignore
-├── package.json
-├── README.md
-└── windsurf.rule.md                # This file
+└── tests/                      # Test files (Jest)
+    ├── unit/                   # Unit tests
+    └── integration/            # Integration tests
+```
 
+## 🛡 API Conventions
+### Rate Limiting
+- **General API**: 100 requests per minute per IP
+- **Auth Endpoints**: 10 requests per minute per IP
+- **Admin Endpoints**: 50 requests per minute per IP
 
+### Response Format
+```json
+{
+  "success": true,
+  "data": {},
+  "message": "Success message",
+  "error": null
+}
+```
+
+### Error Handling
+- **400 Bad Request**: Invalid input/data
+- **401 Unauthorized**: Authentication required
+- **403 Forbidden**: Insufficient permissions
+- **404 Not Found**: Resource not found
+- **500 Internal Server Error**: Server error
+
+### Endpoint Structure
+- **Base URL**: `/api/v1`
+- **Resources**:
+  - `GET /deals` - List all deals
+  - `GET /deals/:id` - Get single deal
+  - `POST /deals` - Create deal (Merchant+)
+  - `PATCH /deals/:id` - Update deal (Owner/Admin)
+  - `DELETE /deals/:id` - Delete deal (Owner/Admin)
+
+## 🧪 Testing
+### Running Tests
+```bash
+# Run all tests
+npm test
+
+# Run specific test file
+npm test path/to/test-file.test.js
+
+# Run with coverage
+npm run test:coverage
+```
+
+### Test Coverage
+- Aim for >80% test coverage
+- Test all critical paths and edge cases
+- Mock external services and APIs
+
+## 🚀 Deployment
+### Staging
+- Automatically deployed on push to `staging` branch
+- Environment: staging.groupon-clone.com
+- Database: MongoDB Atlas (staging cluster)
+
+### Production
+- Manually deployed from `main` branch
+- Environment: groupon-clone.com
+- Database: MongoDB Atlas (production cluster)
+
+## 📚 Documentation
+### API Documentation
+- Swagger/OpenAPI at `/api-docs`
+- Endpoint documentation in JSDoc format
+- Request/response examples
+
+### Database Schema
+```javascript
+// Example User Schema
+const userSchema = new Schema({
+  username: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  role: { type: String, enum: ['user', 'merchant', 'admin'], default: 'user' },
+  // ... other fields
+});
+
+// Example Deal Schema
+const dealSchema = new Schema({
+  title: { type: String, required: true },
+  description: String,
+  originalPrice: { type: Number, required: true },
+  dealPrice: { type: Number, required: true },
+  // ... other fields
+});
+```
+
+### Component Library
+- Storybook for UI component documentation
+- Prop types and default props
+- Usage examples
+- Interactive examples
+
+## 👥 Team Conventions
+- Daily standups at 10:00 AM
+- Code reviews required before merging to `main`
+- Use project board for task tracking
+- Document all major architectural decisions in `/docs/adr`
+
+## 🔐 Security
+- Use environment variables for all secrets
+- Implement rate limiting on auth endpoints
+- Sanitize all user inputs
+- Regular dependency updates
+- Security headers enabled
+
+## 🆘 Getting Help
+- Check `#dev-support` on Slack
+- Create a GitHub issue for bugs/feature requests
+- Refer to `/docs` for additional documentation

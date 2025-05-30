@@ -75,7 +75,7 @@ export const login = async (req, res) => {
     }
     // Generate JWT
     const payload = { id: user._id, email: user.email, role: user.role };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
     return res.json({ message: 'logged', token });
   } catch (err) {
     console.error(err);

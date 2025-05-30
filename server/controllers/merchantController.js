@@ -141,7 +141,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     const payload = { id: merchant._id, email: merchant.email, role: merchant.role };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
     return res.json({ message: 'logged', token });
   } catch (err) {
     console.error(err);
