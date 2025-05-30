@@ -2,10 +2,10 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// @desc    Signup user or merchant
-// @route   POST /api/auth/signup
+// @desc    Register user or merchant
+// @route   POST /api/auth/register
 // @access  Public
-export const signup = async (req, res) => {
+export const register = async (req, res) => {
 
   try {
     const { name, address, email, password, repeatPassword, role } = req.body;
@@ -36,7 +36,7 @@ export const signup = async (req, res) => {
       role: role || 'user'
     });
     await user.save();
-    return res.status(201).json({ message: 'signed up' });
+    return res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
@@ -56,7 +56,6 @@ export const logout = (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 export const login = async (req, res) => {
-
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -74,11 +73,59 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     // Generate JWT
-    const payload = { id: user._id, email: user.email, role: user.role };
+    const payload = { 
+      id: user._id, 
+      email: user.email, 
+      role: user.role,
+      name: user.name,
+      isEmailVerified: user.isEmailVerified
+    };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
-    return res.json({ message: 'logged', token });
+    return res.json({ 
+      message: 'Login successful', 
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        isEmailVerified: user.isEmailVerified,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      }
+    });
   } catch (err) {
-    console.error(err);
+    console.error('Login error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Get current user's profile
+// @route   GET /api/auth/me
+// @access  Private
+export const getMe = async (req, res) => {
+  try {
+    // Get user from the request object (set by auth middleware)
+    const user = req.user;
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Return user data (excluding sensitive information like password)
+    const userData = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isEmailVerified: user.isEmailVerified,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
+    
+    return res.json(userData);
+  } catch (err) {
+    console.error('Get me error:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 };

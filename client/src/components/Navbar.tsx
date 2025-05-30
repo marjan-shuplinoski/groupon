@@ -1,6 +1,29 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 const Navbar = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [activePath, setActivePath] = useState('');
+
+  useEffect(() => {
+    setActivePath(location.pathname);
+  }, [location]);
+
+  const isActive = (path: string) => {
+    return activePath === path ? 'active' : '';
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-teal mb-4">
       <div className="container">
@@ -19,25 +42,56 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/deals">Deals</Link>
+              <Link className={`nav-link ${isActive('/deals')}`} to="/deals">Deals</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/categories">Categories</Link>
+              <Link className={`nav-link ${isActive('/categories')}`} to="/categories">Categories</Link>
             </li>
           </ul>
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">Login</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/signup">Sign Up</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/merchant">Merchant</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/admin">Admin</Link>
-            </li>
+            {user ? (
+              <>
+                {user.role === 'admin' && (
+                  <li className="nav-item">
+                    <Link className={`nav-link ${isActive('/admin/dashboard')}`} to="/admin/dashboard">
+                      Admin Dashboard
+                    </Link>
+                  </li>
+                )}
+                {user.role === 'merchant' && (
+                  <li className="nav-item">
+                    <Link className={`nav-link ${isActive('/merchant/dashboard')}`} to="/merchant/dashboard">
+                      Merchant Dashboard
+                    </Link>
+                  </li>
+                )}
+                <li className="nav-item">
+                  <button 
+                    className="nav-link btn btn-link" 
+                    onClick={handleLogout}
+                    style={{ backgroundColor: 'transparent', border: 'none' }}
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="nav-item">
+                  <Link className={`nav-link ${isActive('/login')}`} to="/login">
+                    Sign In
+                  </Link>
+                </li>
+                <li className="nav-item d-flex align-items-center">
+                  <Link 
+                    className={`btn btn-outline-light ms-2 ${isActive('/register') ? 'active' : ''}`} 
+                    to="/register"
+                  >
+                    Create Account
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>
