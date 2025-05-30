@@ -1,0 +1,14 @@
+{
+  "info": {
+    "name": "Groupon Deals APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "Get Deals (Public)", "request": { "method": "GET", "url": "{{baseUrl}}/api/deals" } },
+    { "name": "Get Deal by ID (Public)", "request": { "method": "GET", "url": "{{baseUrl}}/api/deals/DEAL_ID" } },
+    { "name": "Claim Deal (User)", "request": { "method": "POST", "url": "{{baseUrl}}/api/deals/DEAL_ID/claim", "header": [ { "key": "Authorization", "value": "Bearer {{userToken}}" }, { "key": "Content-Type", "value": "application/json" } ] } },
+    { "name": "Unclaim Deal (User)", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/deals/DEAL_ID/claim", "header": [ { "key": "Authorization", "value": "Bearer {{userToken}}" }, { "key": "Content-Type", "value": "application/json" } ] } },
+    { "name": "Favorite Deal (User)", "request": { "method": "POST", "url": "{{baseUrl}}/api/deals/DEAL_ID/favorite", "header": [ { "key": "Authorization", "value": "Bearer {{userToken}}" }, { "key": "Content-Type", "value": "application/json" } ] } },
+    { "name": "Unfavorite Deal (User)", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/deals/DEAL_ID/favorite", "header": [ { "key": "Authorization", "value": "Bearer {{userToken}}" }, { "key": "Content-Type", "value": "application/json" } ] } }
+  ]
+}
