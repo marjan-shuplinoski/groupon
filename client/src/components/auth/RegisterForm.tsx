@@ -79,7 +79,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, loading }) => {
           
           if (isMerchant) {
             // For merchant registration, include all merchant fields
-            const merchantData: MerchantRegisterData = {
+            const merchantData: MerchantRegisterData & { repeatPassword: string } = {
               name: submitValues.name,
               email: submitValues.email,
               password: submitValues.password,
@@ -89,15 +89,17 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, loading }) => {
               phone: submitValues.phone || '',
               businessDescription: submitValues.businessDescription,
               website: submitValues.website,
+              repeatPassword: submitValues.password,
             };
             onSubmit(merchantData);
           } else {
             // For regular user registration, only include basic fields
-            const userData: UserRegisterData = {
+            const userData: UserRegisterData & { repeatPassword: string } = {
               name: submitValues.name,
               email: submitValues.email,
               password: submitValues.password,
               role: 'user',
+              repeatPassword: submitValues.password,
             };
             onSubmit(userData);
           }

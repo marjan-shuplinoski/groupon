@@ -31,7 +31,10 @@ export const getDealById = async (req, res) => {
   try {
     const deal = await Deal.findById(req.params.id).populate('merchant', 'businessName');
     if (!deal) return res.status(404).json({ message: 'Deal not found' });
-    res.json({ deal });
+    // Ensure image is always present in the response
+    const dealObj = deal.toObject();
+    if (!('image' in dealObj)) dealObj.image = '';
+    res.json({ deal: dealObj });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });

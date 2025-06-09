@@ -14,28 +14,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Redirect based on user role
   const redirectBasedOnRole = useCallback((user: User) => {
-    console.log('Redirecting user with role:', user.role);
     const currentPath = window.location.pathname;
-    
-    // Don't redirect if already on a protected route for the user's role
-    if ((user.role === 'admin' && currentPath.startsWith('/admin')) ||
-        (user.role === 'merchant' && currentPath.startsWith('/merchant')) ||
-        (user.role === 'user' && (currentPath.startsWith('/deals') || currentPath === '/'))) {
-      console.log('Already on a valid route for role:', user.role);
-      return;
+    // Only redirect if on login/register/root
+    if (["/login", "/register", "/"].includes(currentPath)) {
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (user.role === 'merchant') {
+        navigate('/merchant/dashboard');
+      } else {
+        navigate('/deals');
+      }
     }
-    
-    // Redirect based on role
-    if (user.role === 'admin') {
-      console.log('Redirecting to admin dashboard');
-      navigate('/admin/dashboard');
-    } else if (user.role === 'merchant') {
-      console.log('Redirecting to merchant dashboard');
-      navigate('/merchant/dashboard');
-    } else {
-      console.log('Redirecting to deals page');
-      navigate('/deals');
-    }
+    // Otherwise, let user stay on their chosen route
   }, [navigate]);
 
   const logout = useCallback(async () => {

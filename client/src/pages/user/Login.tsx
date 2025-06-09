@@ -51,31 +51,25 @@ const Login = () => {
       await login(email.trim(), password.trim(), rememberMe);
       
       // On successful login, the AuthContext will handle redirection
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Login error details:', err);
-      
-      // Extract error message from the error object
       let errorMessage = 'Login failed. Please check your credentials.';
-      
-      if (err.response) {
-        // Handle API response errors
-        errorMessage = err.response.data?.message || 
-                      err.response.data?.error || 
-                      errorMessage;
-      } else if (err.message) {
-        // Handle other errors with messages
-        errorMessage = err.message;
+      // Type guard for AxiosError
+      if (typeof err === 'object' && err !== null && 'response' in err) {
+        const errorObj = err as { response?: { data?: { message?: string; error?: string }; status?: number } };
+        errorMessage = errorObj.response?.data?.message || errorObj.response?.data?.error || errorMessage;
+        if (errorObj.response?.status === 401 || errorObj.response?.status === 404) {
+          toast.error(errorMessage);
+          navigate('/register');
+          return;
+        }
+      } else if (typeof err === 'object' && err !== null && 'message' in err) {
+        errorMessage = (err as { message: string }).message;
       }
-      
-      // Show error message to user
       toast.error(errorMessage);
-      
-      // Clear sensitive data on error
       if (!rememberMe) {
         setPassword('');
       }
-      
-      // Ensure we don't redirect by returning early
       return;
     } finally {
       setLoading(false);

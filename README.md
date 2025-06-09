@@ -1,4 +1,3 @@
-
 # Groupon Website (MERN Stack)
 
 A Groupon clone built with React (frontend) and Node.js/Express/MongoDB (backend).
@@ -11,6 +10,7 @@ A Groupon clone built with React (frontend) and Node.js/Express/MongoDB (backend
 ## Installation & Running
 
 ### 1. Frontend (React)
+
 ```bash
 cd client
 npm install
@@ -18,6 +18,7 @@ npm start
 ```
 
 ### 2. Backend (Node.js/Express)
+
 ```bash
 cd server
 npm install
@@ -31,11 +32,16 @@ npm start     # For production
 - The frontend will typically start on `http://localhost:3000`.
 
 ## Features
+
 - User registration/login (JWT)
 - Merchant registration/login (JWT)
 - Role-based route protection
 - Merchants can manage their own deals
 - Ready for admin and user dashboard features
+
+---
+
+> **Project Rules:** See [.vscode/vscode.rule.md](.vscode/vscode.rule.md) for coding standards, workflow, and team conventions.
 
 ---
 

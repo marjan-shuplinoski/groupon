@@ -44,9 +44,6 @@ const Navbar = () => {
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/deals')}`} to="/deals">Deals</Link>
             </li>
-            <li className="nav-item">
-              <Link className={`nav-link ${isActive('/categories')}`} to="/categories">Categories</Link>
-            </li>
           </ul>
           <ul className="navbar-nav">
             {user ? (
@@ -62,6 +59,13 @@ const Navbar = () => {
                   <li className="nav-item">
                     <Link className={`nav-link ${isActive('/merchant/dashboard')}`} to="/merchant/dashboard">
                       Merchant Dashboard
+                    </Link>
+                  </li>
+                )}
+                {user.role === 'user' && (
+                  <li className="nav-item">
+                    <Link className={`nav-link ${isActive('/dashboard')}`} to="/dashboard">
+                      Dashboard
                     </Link>
                   </li>
                 )}

@@ -1,0 +1,4 @@
+{
+    // Example: Enable format on save for this project only
+    "editor.formatOnSave": true
+}

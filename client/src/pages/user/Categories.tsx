@@ -1,6 +1,8 @@
 import PageLayout from '../../components/PageLayout';
+import { useNavigate } from 'react-router-dom';
 
 const Categories = () => {
+  const navigate = useNavigate();
   const categories = [
     'Food & Drink',
     'Beauty & Spas',
@@ -21,7 +23,12 @@ const Categories = () => {
           <div key={index} className="col-md-4 mb-3">
             <div className="p-3 bg-teal-light rounded-3 text-center">
               <h4>{category}</h4>
-              <button className="btn btn-light btn-sm">View Deals</button>
+              <button
+                className="btn btn-light btn-sm"
+                onClick={() => navigate(`/deals?category=${encodeURIComponent(category)}`)}
+              >
+                View Deals
+              </button>
             </div>
           </div>
         ))}

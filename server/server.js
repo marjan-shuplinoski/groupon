@@ -14,11 +14,12 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'https://your-production-domain.com' 
-    : 'http://localhost:5173',
+  origin: [
+    `http://${process.env.HOST || 'localhost'}:5173`,
+    `http://${process.env.HOST || '192.168.0.106'}:5173`,
+  ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // PATCH added
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -34,14 +35,15 @@ app.get('/api/ping', (req, res) => {
 // Register routes
 app.use('/api/auth', authRouter);
 app.use('/api/deals', dealsRouter);
-app.use('/api/user', userRouter);
+app.use('/api/users', userRouter); // Add this line for /api/users/* endpoints
 app.use('/api/merchant', merchantRouter);
 app.use('/api/admin', adminRouter);
 
 // Connect to MongoDB
 connectDB();
 
+const HOST = process.env.HOST || '0.0.0.0';
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on http://${HOST}:${PORT}`);
 });

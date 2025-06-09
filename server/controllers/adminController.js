@@ -79,7 +79,7 @@ export const getMerchants = async (req, res) => {
 
 // Ban/unban merchant
 export const banMerchant = async (req, res) => {
-  const merchant = await User.findById(req.params.merchantId);
+  const merchant = await User.findById(req.params.id);
   if (!merchant || merchant.role !== 'merchant') return res.status(404).json({ message: 'Merchant not found' });
   merchant.isBanned = !merchant.isBanned;
   await merchant.save();
@@ -128,4 +128,39 @@ export const getStats = async (req, res) => {
   const users = await User.find({}, 'claimedDeals');
   const totalClaimed = users.reduce((sum, user) => sum + (user.claimedDeals ? user.claimedDeals.length : 0), 0);
   res.json({ totalUsers, totalMerchants, totalDeals, totalClaimed });
+};
+
+// Delete user
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || user.role !== 'user') return res.status(404).json({ message: 'User not found' });
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: 'User deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Delete merchant
+export const deleteMerchant = async (req, res) => {
+  try {
+    const merchant = await User.findById(req.params.id);
+    if (!merchant || merchant.role !== 'merchant') return res.status(404).json({ message: 'Merchant not found' });
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Merchant deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Delete deal
+export const deleteDeal = async (req, res) => {
+  try {
+    const deal = await Deal.findByIdAndDelete(req.params.id);
+    if (!deal) return res.status(404).json({ message: 'Deal not found' });
+    res.json({ message: 'Deal deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
 };

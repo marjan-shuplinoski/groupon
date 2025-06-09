@@ -152,12 +152,13 @@ export const login = async (req, res) => {
 // Deal CRUD
 export const createDeal = async (req, res) => {
   try {
-    const { title, description, price, discount, terms, expiry, status } = req.body;
+    const { title, description, price, discount, terms, expiry, status, image } = req.body;
     
     // Validate required fields
     const validateField = (field, name) => !field ? { error: true, message: `${name} is required.` } : null;
     const validateNumber = (value, name) => typeof value !== 'number' || value <= 0 ? { error: true, message: `${name} must be a positive number.` } : null;
     const validateStatus = (status) => status && !['published', 'draft', 'expired'].includes(status) ? { error: true, message: 'Status must be published, draft, or expired.' } : null;
+    const validateImage = (image) => image && typeof image !== 'string' ? { error: true, message: 'Image must be a valid URL.' } : null;
 
     const validations = [
       validateField(title, 'Title'),
@@ -168,7 +169,8 @@ export const createDeal = async (req, res) => {
       validateField(expiry, 'Expiry date'),
       validateNumber(price, 'Price'),
       validateNumber(discount, 'Discount'),
-      validateStatus(status)
+      validateStatus(status),
+      validateImage(image)
     ];
 
     const validationError = validations.find(v => v && v.error);
@@ -185,7 +187,8 @@ export const createDeal = async (req, res) => {
       terms,
       expiry,
       status: status || 'draft', // Default to draft if not provided
-      merchant: req.user.id
+      merchant: req.user.id,
+      image
     });
     
     await deal.save();
@@ -227,7 +230,7 @@ export const updateDeal = async (req, res) => {
     if (!existingDeal) return res.status(404).json({ message: 'Deal not found' });
     
     // Extract only the fields that are in the Deal model
-    const { title, description, price, discount, terms, expiry, status } = req.body;
+    const { title, description, price, discount, terms, expiry, status, image } = req.body;
     
     // Create an update object with only valid fields
     const updateData = {};
@@ -252,6 +255,12 @@ export const updateDeal = async (req, res) => {
         return res.status(400).json({ message: 'Status must be published, draft, or expired' });
       }
       updateData.status = status;
+    }
+    if (image !== undefined) {
+      if (typeof image !== 'string') {
+        return res.status(400).json({ message: 'Image must be a valid URL' });
+      }
+      updateData.image = image;
     }
     
     // Update the deal with validated data

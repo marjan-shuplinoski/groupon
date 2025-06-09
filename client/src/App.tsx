@@ -12,7 +12,8 @@ import Register from './pages/user/Register';
 import Merchant from './pages/merchant/Merchant';
 import Admin from './pages/admin/Admin';
 import Deals from './pages/user/Deals';
-import Categories from './pages/user/Categories';
+import DealDetails from './pages/user/DealDetails';
+import UserDashboard from './pages/user/UserDashboard';
 import './App.css';
 
 // Protected route component
@@ -31,6 +32,7 @@ const ProtectedRoute = ({ requiredRole, redirectTo = '/login' }: { requiredRole?
 };
 
 function App() {
+
   return (
     <AuthProvider>
       <div className="bg-teal text-white min-vh-100">
@@ -51,7 +53,8 @@ function App() {
           
           <Route element={<ProtectedRoute />}>
             <Route path="/deals" element={<Deals />} />
-            <Route path="/categories" element={<Categories />} />
+            <Route path="/deals/:id" element={<DealDetails />} />
+            <Route path="/dashboard" element={<UserDashboard />} />
           </Route>
           
           {/* Catch all route */}

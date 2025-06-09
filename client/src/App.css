@@ -101,6 +101,22 @@
   border-radius: 0.5rem !important;
 }
 
+/* Image column styling for deals */
+.deal-image-col {
+  background-color: #e9ecef;
+  min-height: 180px;
+  max-height: 220px;
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+img.w-100.h-100.rounded-start {
+  background-color: #00999900;
+  margin: 0;
+  padding: 0;
+  border-radius: 5%;
+  margin-left: 15px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .display-4 {

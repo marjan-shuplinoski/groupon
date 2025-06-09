@@ -17,7 +17,6 @@ const Register = () => {
 
   const handleSubmit = async (values: RegisterFormData) => {
     setLoading(true);
-    
     try {
       // Make API call based on user type
       if (values.role === 'merchant') {
@@ -35,9 +34,24 @@ const Register = () => {
           navigate('/deals');
         }
       }
-    } catch (error) {
-      // Error is already handled by the interceptor
-      console.error('Registration error:', error);
+    } catch (error: unknown) {
+      let message = 'Registration failed. Please try again.';
+      if (typeof error === 'object' && error !== null && 'response' in error) {
+        const err = error as { response?: { status?: number; data?: { message?: string; error?: string } } };
+        const status = err.response?.status;
+        if (status === 409) {
+          message = 'An account with this email already exists.';
+        } else if (status === 400) {
+          message = err.response?.data?.message || 'Invalid registration data.';
+        } else if (status === 500) {
+          message = 'Server error. Please try again later.';
+        } else {
+          message = err.response?.data?.message || err.response?.data?.error || message;
+        }
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        message = (error as { message: string }).message;
+      }
+      toast.error(message);
     } finally {
       setLoading(false);
     }
