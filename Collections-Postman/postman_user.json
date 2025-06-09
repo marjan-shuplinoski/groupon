@@ -1,0 +1,12 @@
+{
+  "info": {
+    "name": "Groupon User APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "User Dashboard", "request": { "method": "GET", "url": "{{baseUrl}}/api/user/dashboard", "header": [ { "key": "Authorization", "value": "Bearer {{userToken}}" }, { "key": "Content-Type", "value": "application/json" } ] } },
+    { "name": "User Profile", "request": { "method": "GET", "url": "{{baseUrl}}/api/user/profile", "header": [ { "key": "Authorization", "value": "Bearer {{userToken}}" }, { "key": "Content-Type", "value": "application/json" } ] } },
+    { "name": "Get Claimed Deals", "request": { "method": "GET", "url": "{{baseUrl}}/api/users/me/claimed", "header": [ { "key": "Authorization", "value": "Bearer {{userToken}}" }, { "key": "Content-Type", "value": "application/json" } ] } },
+    { "name": "Get Favorited Deals", "request": { "method": "GET", "url": "{{baseUrl}}/api/users/me/favorited", "header": [ { "key": "Authorization", "value": "Bearer {{userToken}}" }, { "key": "Content-Type", "value": "application/json" } ] } }
+  ]
+}
