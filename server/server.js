@@ -15,15 +15,31 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: [
-    `http://${process.env.HOST || 'localhost'}:5173`,
-    `http://${process.env.HOST || '192.168.0.106'}:5173`,
+    'http://localhost:5173',
+    'http://192.168.0.106:5173',
   ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // PATCH added
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// Global preflight handler for CORS
+app.options('*', cors());
 app.use(express.json());
+
+// Debug: log request origin and CORS headers
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    console.log('Request Origin:', req.headers.origin);
+    console.log('CORS headers:', {
+      'Access-Control-Allow-Origin': res.getHeader('Access-Control-Allow-Origin'),
+      'Access-Control-Allow-Credentials': res.getHeader('Access-Control-Allow-Credentials'),
+      'Access-Control-Allow-Methods': res.getHeader('Access-Control-Allow-Methods'),
+      'Access-Control-Allow-Headers': res.getHeader('Access-Control-Allow-Headers'),
+    });
+  });
+  next();
+});
 
 // Health check route
 app.get('/api/ping', (req, res) => {
