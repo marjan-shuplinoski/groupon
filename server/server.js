@@ -28,6 +28,20 @@ app.options('*', cors());
 
 app.use(express.json());
 
+// Debug: log request origin and CORS headers
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    console.log('Request Origin:', req.headers.origin);
+    console.log('CORS headers:', {
+      'Access-Control-Allow-Origin': res.getHeader('Access-Control-Allow-Origin'),
+      'Access-Control-Allow-Credentials': res.getHeader('Access-Control-Allow-Credentials'),
+      'Access-Control-Allow-Methods': res.getHeader('Access-Control-Allow-Methods'),
+      'Access-Control-Allow-Headers': res.getHeader('Access-Control-Allow-Headers'),
+    });
+  });
+  next();
+});
+
 // Health check route
 app.get('/api/ping', (req, res) => {
   res.json({ message: 'pong' });
