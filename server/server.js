@@ -15,13 +15,16 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: [
-    `http://${process.env.HOST || 'localhost'}:5173`,
-    `http://${process.env.HOST || '192.168.0.106'}:5173`,
+    'http://localhost:5173',
+    'http://192.168.0.106:5173',
   ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // PATCH added
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Global preflight handler for CORS
+app.options('*', cors());
 
 app.use(express.json());
 
