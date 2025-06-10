@@ -25,7 +25,6 @@ app.use(cors({
 
 // Global preflight handler for CORS
 app.options('*', cors());
-
 app.use(express.json());
 
 // Debug: log request origin and CORS headers
