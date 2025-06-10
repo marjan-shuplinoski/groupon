@@ -1,7 +1,9 @@
 import { api } from './api';
+import type { User } from '../types/auth';
+import type { Deal } from './dealService';
 
 export const fetchUsers = async () => {
-  const res = await api.get('/admin/users');
+  const res = await api.get<{ users: User[] }>('/admin/users');
   return res.data.users;
 };
 
@@ -16,7 +18,7 @@ export const deleteUser = async (id: string) => {
 };
 
 export const fetchMerchants = async () => {
-  const res = await api.get('/admin/merchants');
+  const res = await api.get<{ merchants: User[] }>('/admin/merchants');
   return res.data.merchants;
 };
 
@@ -31,7 +33,7 @@ export const deleteMerchant = async (id: string) => {
 };
 
 export const fetchDeals = async () => {
-  const res = await api.get('/admin/deals');
+  const res = await api.get<{ deals: Deal[] }>('/admin/deals');
   return res.data.deals;
 };
 

@@ -2,19 +2,24 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import PageLayout from '../../components/PageLayout';
 import adminService from '../../services/adminService';
+import type { User } from '../../types/auth';
+import type { Deal } from '../../services/dealService';
 
 const Admin = () => {
   const [section, setSection] = useState<'users' | 'merchants' | 'deals' | null>(null);
-  const [data, setData] = useState<Record<string, unknown>[]>([]);
+  const [data, setData] = useState<User[] | Deal[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleManage = async (type: 'users' | 'merchants' | 'deals') => {
     setSection(type);
     setLoading(true);
     try {
-      if (type === 'users') setData(await adminService.fetchUsers());
-      if (type === 'merchants') setData(await adminService.fetchMerchants());
-      if (type === 'deals') setData(await adminService.fetchDeals());
+      if (type === 'users' || type === 'merchants') {
+        setData(await adminService.fetchUsers());
+      }
+      if (type === 'deals') {
+        setData(await adminService.fetchDeals());
+      }
     } catch {
       toast.error('Failed to load data');
     } finally {
@@ -45,11 +50,6 @@ const Admin = () => {
     } catch {
       toast.error('Failed to update deal status');
     }
-  };
-
-  // Helper to cast item to expected type
-  const get = <T,>(obj: Record<string, unknown>, key: string, fallback: T): T => {
-    return (obj[key] as T) ?? fallback;
   };
 
   return (
@@ -95,30 +95,36 @@ const Admin = () => {
                 </thead>
                 <tbody>
                   {data.map((item) => (
-                    <tr key={get<string>(item, '_id', '')}>
-                      {section === 'users' && <>
-                        <td>{get<string>(item, 'email', '-')}</td>
-                        <td>{get<boolean>(item, 'isBanned', false) ? 'Yes' : 'No'}</td>
-                        <td>
-                          <button className="btn btn-warning btn-sm me-2" onClick={() => handleBan(get<string>(item, '_id', ''))}>{get<boolean>(item, 'isBanned', false) ? 'Unban' : 'Ban'}</button>
-                        </td>
-                      </>}
-                      {section === 'merchants' && <>
-                        <td>{get<string>(item, 'email', '-')}</td>
-                        <td>{get<string>(item, 'businessName', '-')}</td>
-                        <td>{get<boolean>(item, 'isBanned', false) ? 'Yes' : 'No'}</td>
-                        <td>
-                          <button className="btn btn-warning btn-sm me-2" onClick={() => handleBan(get<string>(item, '_id', ''))}>{get<boolean>(item, 'isBanned', false) ? 'Unban' : 'Ban'}</button>
-                        </td>
-                      </>}
-                      {section === 'deals' && <>
-                        <td>{get<string>(item, 'title', '-')}</td>
-                        <td>{get<string>(item, 'status', '-')}</td>
-                        <td>{typeof item.merchant === 'object' && item.merchant ? (get<string>(item.merchant as Record<string, unknown>, 'businessName', get<string>(item.merchant as Record<string, unknown>, 'email', '-'))) : '-'}</td>
-                        <td>
-                          <button className="btn btn-warning btn-sm me-2" onClick={() => handleModerate(get<string>(item, '_id', ''), get<string>(item, 'status', ''))}>{get<string>(item, 'status', '') === 'published' ? 'Unpublish' : 'Publish'}</button>
-                        </td>
-                      </>}
+                    <tr key={'_id' in item ? item._id : ''}>
+                      {section === 'users' && (
+                        <>
+                          <td>{'email' in item ? item.email : '-'}</td>
+                          <td>{'isBanned' in item && item.isBanned ? 'Yes' : 'No'}</td>
+                          <td>
+                            <button className="btn btn-warning btn-sm me-2" onClick={() => handleBan('' + ('_id' in item ? item._id : ''))}>{'isBanned' in item && item.isBanned ? 'Unban' : 'Ban'}</button>
+                          </td>
+                        </>
+                      )}
+                      {section === 'merchants' && (
+                        <>
+                          <td>{'email' in item ? item.email : '-'}</td>
+                          <td>{'businessName' in item ? item.businessName : '-'}</td>
+                          <td>{'isBanned' in item && item.isBanned ? 'Yes' : 'No'}</td>
+                          <td>
+                            <button className="btn btn-warning btn-sm me-2" onClick={() => handleBan('' + ('_id' in item ? item._id : ''))}>{'isBanned' in item && item.isBanned ? 'Unban' : 'Ban'}</button>
+                          </td>
+                        </>
+                      )}
+                      {section === 'deals' && (
+                        <>
+                          <td>{'title' in item ? item.title : '-'}</td>
+                          <td>{'status' in item ? item.status : '-'}</td>
+                          <td>{typeof (item as Deal).merchant === 'object' && (item as Deal).merchant ? ((item as Deal).merchant as { businessName?: string; email?: string }).businessName ?? ((item as Deal).merchant as { email?: string }).email ?? '-' : '-'}</td>
+                          <td>
+                            <button className="btn btn-warning btn-sm me-2" onClick={() => handleModerate('' + ('_id' in item ? item._id : ''), '' + ('status' in item ? item.status : ''))}>{'status' in item && item.status === 'published' ? 'Unpublish' : 'Publish'}</button>
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))}
                 </tbody>

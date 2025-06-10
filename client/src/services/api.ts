@@ -42,13 +42,13 @@ api.interceptors.response.use(
       
       try {
         // Try to refresh the token
-        const response = await axios.post(
+        const response = await axios.post<{ token: string }>(
           `${API_URL}/auth/refresh-token`,
           {},
           { withCredentials: true }
         );
         
-        if (response.data?.token) {
+        if (response.data && typeof response.data.token === 'string') {
           const token = response.data.token;
           
           // Store the new token
@@ -73,5 +73,19 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export async function refreshToken() {
+  try {
+    const response = await api.post<{ token: string }>('/auth/refresh-token');
+    if (response.data?.token) {
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      return token;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+}
 
 export { api };
